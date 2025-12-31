@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Simple Photo Album</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.4;
+      }
+
+      body {
+        margin: 0;
+        background: #f5f5f5;
+        color: #1d1d1d;
+      }
+
+      header {
+        padding: 24px 32px 8px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+      }
+
+      p {
+        margin: 0 0 12px;
+        max-width: 720px;
+      }
+
+      .notice {
+        background: #fff;
+        border-radius: 10px;
+        padding: 16px;
+        margin: 16px 32px 0;
+        border: 1px solid #e0e0e0;
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 18px;
+        padding: 24px 32px 40px;
+      }
+
+      figure {
+        margin: 0;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+      }
+
+      figcaption {
+        padding: 10px 12px 14px;
+        font-size: 14px;
+      }
+
+      img {
+        width: 100%;
+        display: block;
+        height: 180px;
+        object-fit: cover;
+        background: #d9d9d9;
+      }
+
+      a {
+        color: #1668e8;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #111214;
+          color: #f4f4f4;
+        }
+
+        .notice,
+        figure {
+          background: #1b1c1f;
+          border-color: #2b2c30;
+          box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+        }
+
+        img {
+          background: #2a2b30;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Simple Photo Album</h1>
+      <p>
+        Provide a comma-separated list of image URLs using the <code>?urls=</code>
+        query parameter. Example:
+        <a href="?urls=https://picsum.photos/id/1018/600/400,https://picsum.photos/id/1025/600/400,https://picsum.photos/id/1039/600/400">
+          Load sample album
+        </a>
+      </p>
+    </header>
+
+    <div class="notice" id="notice" hidden>
+      <strong>No images loaded yet.</strong>
+      <p>
+        Add image URLs to the page URL using <code>?urls=</code> and separate them
+        with commas.
+      </p>
+    </div>
+
+    <section class="gallery" id="gallery"></section>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const urlsParam = params.get("urls") || "";
+      const urls = urlsParam
+        .split(",")
+        .map((url) => url.trim())
+        .filter(Boolean);
+
+      const gallery = document.getElementById("gallery");
+      const notice = document.getElementById("notice");
+
+      if (!urls.length) {
+        notice.hidden = false;
+      }
+
+      urls.forEach((url, index) => {
+        const figure = document.createElement("figure");
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = `Photo ${index + 1}`;
+        img.loading = "lazy";
+
+        const caption = document.createElement("figcaption");
+        const link = document.createElement("a");
+        link.href = url;
+        link.textContent = url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        caption.appendChild(link);
+
+        figure.appendChild(img);
+        figure.appendChild(caption);
+        gallery.appendChild(figure);
+      });
+    </script>
+  </body>
+</html>
